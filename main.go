@@ -27,7 +27,7 @@ func runCommand(args ...string) (string, error) {
         return strings.TrimRight(out.String(), "\r\n"), e
 }
 
-func RunPowershellCommand(username string, password string, server string, command string, usessl string, usessh string) (string, error) {
+func RunPowershellCommand(username string, password string, server string, command string, usessl bool, usessh bool) (string, error) {
         var pscommand string
 
         if runtime.GOOS == "windows" {
@@ -38,7 +38,7 @@ func RunPowershellCommand(username string, password string, server string, comma
 
         var winRMPre string
 
-        if (usessh == "1") {
+        if (usessh == true) {
                 winRMPre = "$s = New-PSSession -HostName " + server + " -Username " + username + " -SSHTransport"
         } else {
                 winRMPre = "$SecurePassword = '" + password + "' | ConvertTo-SecureString -AsPlainText -Force; $cred = New-Object System.Management.Automation.PSCredential -ArgumentList '" + username + "', $SecurePassword; $s = New-PSSession -ComputerName " + server + " -Credential $cred"
@@ -54,7 +54,7 @@ func RunPowershellCommand(username string, password string, server string, comma
 
         var winRMCommand string
 
-        if (usessl == "1") {
+        if (usessl == true) {
                 winRMCommand = winRMPre + " -UseSSL" + winRMPost
         } else {
                 winRMCommand = winRMPre + winRMPost
